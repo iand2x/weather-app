@@ -1,7 +1,7 @@
 {
   "files": [],
   "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
+    { "path": "./tsconfig.app.json" }, //2 separate tsconfig as there's 2 environment, the app(browser)
+    { "path": "./tsconfig.node.json" } //and the node, vite
   ]
 }
