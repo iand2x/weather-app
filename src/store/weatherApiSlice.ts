@@ -1,0 +1,113 @@
+import {
+  createApi,
+  fetchBaseQuery,
+  type BaseQueryFn,
+} from "@reduxjs/toolkit/query/react";
+import { OPENWEATHER_API_KEY, OPENWEATHER_BASE } from "@/utils/config";
+import type { WeatherData, WeatherQuery } from "@/services/weatherService";
+
+// OpenWeather API response interface
+interface OpenWeatherResponse {
+  weather: Array<{
+    main: string;
+    description: string;
+    icon: string;
+  }>;
+  main: {
+    temp: number;
+    feels_like: number;
+    humidity: number;
+    pressure: number;
+  };
+  wind: {
+    speed: number;
+  };
+  visibility?: number;
+  name: string;
+  sys: {
+    country: string;
+  };
+}
+
+// Transform OpenWeather API response to our internal WeatherData format
+function transformWeatherResponse(response: OpenWeatherResponse): WeatherData {
+  const weather = response.weather[0];
+  return {
+    temperature: Math.round(response.main.temp),
+    feelsLike: Math.round(response.main.feels_like),
+    condition: weather.main,
+    description: weather.description,
+    icon: weather.icon,
+    humidity: response.main.humidity,
+    pressure: response.main.pressure,
+    windSpeed: response.wind.speed,
+    visibility: response.visibility,
+    city: response.name,
+    country: response.sys.country,
+  };
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const rawBaseQuery = fetchBaseQuery({ baseUrl: OPENWEATHER_BASE });
+const baseQueryWithDelay: BaseQueryFn = async (args, api, extra) => {
+  if (import.meta.env.DEV) await sleep(800); // tweak ms
+  return rawBaseQuery(args, api, extra);
+};
+
+export const weatherApi = createApi({
+  reducerPath: "weatherApi",
+  baseQuery: baseQueryWithDelay,
+  tagTypes: ["Weather"],
+  endpoints: (builder) => ({
+    getWeather: builder.query<WeatherData, WeatherQuery>({
+      query: ({ city, country }) => ({
+        url: "/weather",
+        params: {
+          q: country ? `${city},${country}` : city,
+          appid: OPENWEATHER_API_KEY,
+          units: "metric",
+        },
+        timeout: 10000,
+      }),
+      transformResponse: (response: OpenWeatherResponse) =>
+        transformWeatherResponse(response),
+      transformErrorResponse: (response: {
+        status: string | number;
+        data?: unknown;
+      }) => {
+        // Handle different error cases
+        if (response.status === 404) {
+          return {
+            message: "City not found. Please check the spelling and try again.",
+            code: "NOT_FOUND",
+          };
+        }
+        if (response.status === 401) {
+          return {
+            message: "API configuration error. Please try again later.",
+            code: "INVALID_KEY",
+          };
+        }
+        if (
+          response.status === "FETCH_ERROR" ||
+          response.status === "TIMEOUT_ERROR"
+        ) {
+          return {
+            message:
+              "Network error. Please check your connection and try again.",
+            code: "NETWORK_ERROR",
+          };
+        }
+        return {
+          message: "Unable to fetch weather data. Please try again.",
+          code: "UNKNOWN",
+        };
+      },
+      providesTags: (_result, _error, { city, country }) => [
+        { type: "Weather", id: `${city}-${country || ""}` },
+      ],
+    }),
+  }),
+});
+
+export const { useGetWeatherQuery, useLazyGetWeatherQuery } = weatherApi; //lazy triggers on demand

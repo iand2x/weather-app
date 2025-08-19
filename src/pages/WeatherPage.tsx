@@ -1,30 +1,53 @@
-import { useState } from "react";
 import SearchBar from "@/components/SearchBar";
 import WeatherCard from "@/components/WeatherCard";
 import HistoryList from "@/components/HistoryList";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
-import type { WeatherData } from "@/services/weatherService";
+import { useLazyGetWeatherQuery } from "src/store/weatherApiSlice";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import {
+  addSearchToHistory,
+  removeSearchFromHistory,
+  type SearchHistoryItem,
+} from "@/store/searchHistorySlice";
+import { getErrorMessage } from "@/utils/isErrorMessage";
 import "./WeatherPage.css";
 
-export interface SearchHistory {
-  id: string;
-  city: string;
-  country?: string;
-  timestamp: number;
-}
+// Re-export for compatibility with existing HistoryList component
+export type SearchHistory = SearchHistoryItem;
 
 export default function WeatherPage() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [loading, setLoading] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [error, setError] = useState<string | null>(null);
-  const [searchHistory, setSearchHistory] = useState<SearchHistory[]>([]);
+  // Redux state and actions
+  const dispatch = useAppDispatch();
+  const searchHistory = useAppSelector((state) => state.searchHistory.items); //global state
+
+  // RTK Query hook for weather data
+  // side note: isFetching and isLoading are RTK Query hooks
+  const [getWeather, { data: weatherData, isLoading, isFetching, error }] =
+    useLazyGetWeatherQuery();
 
   const handleSearch = async (city: string, country?: string) => {
-    // TODO: Implement search logic with useWeather hook
-    console.log("Search for:", { city, country });
+    if (!city.trim()) return;
+
+    const trimmedCity = city.trim();
+    const trimmedCountry = country?.trim();
+
+    try {
+      await getWeather({
+        city: trimmedCity,
+        country: trimmedCountry,
+      }).unwrap();
+
+      // Add to history on successful search
+      dispatch(
+        addSearchToHistory({
+          city: trimmedCity,
+          country: trimmedCountry,
+        })
+      );
+    } catch (err) {
+      // Error is handled by RTK Query automatically
+      console.error("Search failed:", err);
+    }
   };
 
   const handleHistorySearch = (historyItem: SearchHistory) => {
@@ -32,8 +55,11 @@ export default function WeatherPage() {
   };
 
   const handleHistoryDelete = (id: string) => {
-    setSearchHistory((prev) => prev.filter((item) => item.id !== id));
+    dispatch(removeSearchFromHistory(id));
   };
+
+  // Transform RTK Query error to string for WeatherCard component
+  const errorMessage = error ? getErrorMessage(error) : null;
 
   return (
     <div className="weather-page">
@@ -45,11 +71,18 @@ export default function WeatherPage() {
       <main className="weather-main">
         <div className="weather-grid">
           <section className="search-section">
-            <SearchBar onSearch={handleSearch} loading={loading} />
+            <SearchBar
+              onSearch={handleSearch}
+              loading={isLoading || isFetching}
+            />
           </section>
 
           <section className="weather-section">
-            <WeatherCard data={weatherData} loading={loading} error={error} />
+            <WeatherCard
+              data={weatherData || null}
+              loading={isLoading || isFetching}
+              error={errorMessage}
+            />
           </section>
 
           <section className="history-section">
@@ -57,6 +90,7 @@ export default function WeatherPage() {
               history={searchHistory}
               onSearch={handleHistorySearch}
               onDelete={handleHistoryDelete}
+              loading={isLoading || isFetching}
             />
           </section>
         </div>

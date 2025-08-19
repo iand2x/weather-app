@@ -1,16 +1,18 @@
-import type { SearchHistory } from "../pages/WeatherPage";
+import type { SearchHistory } from "@/pages/WeatherPage";
 import "./HistoryList.css";
 
 interface HistoryListProps {
   history: SearchHistory[];
   onSearch: (item: SearchHistory) => void;
   onDelete: (id: string) => void;
+  loading?: boolean;
 }
 
 export default function HistoryList({
   history,
   onSearch,
   onDelete,
+  loading = false,
 }: HistoryListProps) {
   if (history.length === 0) {
     return (
@@ -57,6 +59,7 @@ export default function HistoryList({
                 onClick={() => onSearch(item)}
                 title="Search again"
                 className="search-button"
+                disabled={loading}
               >
                 Search
               </button>
