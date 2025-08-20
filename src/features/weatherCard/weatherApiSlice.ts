@@ -1,7 +1,7 @@
 import {
   createApi,
   fetchBaseQuery,
-  type BaseQueryFn,
+  // type BaseQueryFn,
 } from "@reduxjs/toolkit/query/react";
 import { OPENWEATHER_API_KEY, OPENWEATHER_BASE } from "@/utils/config";
 import type {
@@ -26,13 +26,12 @@ function transformWeatherResponse(response: OpenWeatherResponse): WeatherData {
   };
 }
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+// const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const rawBaseQuery = fetchBaseQuery({ baseUrl: OPENWEATHER_BASE });
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const baseQueryWithDelay: BaseQueryFn = async (args, api, extra) => {
-  if (import.meta.env.DEV) await sleep(800); // tweak ms to simulate loading.
-  return rawBaseQuery(args, api, extra);
-};
+// const baseQueryWithDelay: BaseQueryFn = async (args, api, extra) => {
+//   if (import.meta.env.DEV) await sleep(800); // tweak ms to simulate loading.
+//   return rawBaseQuery(args, api, extra);
+// };
 
 export const weatherApi = createApi({
   reducerPath: "weatherApi",
