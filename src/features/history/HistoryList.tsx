@@ -1,4 +1,5 @@
-import { HiOutlineSearch, HiOutlineTrash } from "react-icons/hi";
+import { HiOutlineSearch, HiOutlineTrash, HiOutlineCog } from "react-icons/hi";
+import { useState } from "react";
 import type { SearchHistoryItem } from "@/types/history";
 import "./HistoryList.css";
 
@@ -6,6 +7,9 @@ interface HistoryListProps {
   history: SearchHistoryItem[];
   onSearch: (item: SearchHistoryItem) => void;
   onDelete: (id: string) => void;
+  onClear?: () => void;
+  maxLength?: number;
+  onSetMaxLength?: (length: number) => void;
   loading?: boolean;
 }
 
@@ -13,8 +17,19 @@ export default function HistoryList({
   history,
   onSearch,
   onDelete,
+  onClear,
+  maxLength = 10,
+  onSetMaxLength,
   loading = false,
 }: HistoryListProps) {
+  const [showSettings, setShowSettings] = useState(false);
+
+  const handleMaxLengthChange = (newLength: number) => {
+    //checks if onSetMaxLength is defined
+    if (newLength >= 1 && newLength <= 50 && onSetMaxLength) {
+      onSetMaxLength(newLength);
+    }
+  };
   if (history.length === 0) {
     return (
       <div className="history-container empty">
@@ -42,7 +57,64 @@ export default function HistoryList({
 
   return (
     <div className="history-container">
-      <h3 className="history-title">Search History</h3>
+      <div className="history-header">
+        <h3 className="history-title">Search History</h3>
+        <div className="history-header-actions">
+          {onSetMaxLength && (
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              title="Settings"
+              className="history-settings"
+              disabled={loading}
+              role="button"
+              aria-label="Toggle history settings"
+            >
+              <HiOutlineCog size={18} />
+            </button>
+          )}
+          {onClear && history.length > 0 && (
+            <button
+              onClick={onClear}
+              title="Clear all history"
+              className="history-clear"
+              disabled={loading}
+              role="button"
+              aria-label="Clear all search history"
+            >
+              <HiOutlineTrash size={18} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {showSettings && onSetMaxLength && (
+        <div className="history-settings-panel">
+          <div className="settings-item">
+            <label htmlFor="max-length-input" className="settings-label">
+              Maximum items to keep:
+            </label>
+            <input
+              id="max-length-input"
+              type="number"
+              min="1"
+              max="50"
+              value={maxLength}
+              onChange={(e) => {
+                const value = parseInt(e.target.value, 10);
+                if (value >= 1 && value <= 50) {
+                  handleMaxLengthChange(value);
+                }
+              }}
+              className="settings-input"
+              disabled={loading}
+            />
+          </div>
+          <p className="settings-help">
+            Choose how many recent searches to remember (1-50)
+          </p>
+        </div>
+      )}
+
       <div className="history-list">
         {history.map((item) => (
           <div key={item.id} className="history-item">

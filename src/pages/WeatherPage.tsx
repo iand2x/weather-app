@@ -7,6 +7,8 @@ import { useAppSelector, useAppDispatch } from "src/app/hooks";
 import {
   addSearchToHistory,
   removeSearchFromHistory,
+  clearSearchHistory,
+  setMaxHistoryLength,
 } from "src/features/history/searchHistorySlice";
 import { getErrorMessage } from "@/utils/isErrorMessage";
 import type { SearchHistoryItem } from "@/types/history";
@@ -16,6 +18,9 @@ export default function WeatherPage() {
   // Redux state and actions
   const dispatch = useAppDispatch();
   const searchHistory = useAppSelector((state) => state.searchHistory.items); //global state
+  const maxHistoryLength = useAppSelector(
+    (state) => state.searchHistory.maxLength
+  );
 
   // RTK Query hook for weather data
   // side note: isFetching and isLoading are RTK Query hooks
@@ -55,6 +60,14 @@ export default function WeatherPage() {
     dispatch(removeSearchFromHistory(id));
   };
 
+  const handleHistoryClear = () => {
+    dispatch(clearSearchHistory());
+  };
+
+  const handleSetMaxLength = (length: number) => {
+    dispatch(setMaxHistoryLength(length));
+  };
+
   // Transform RTK Query error to string for WeatherCard component
   const errorMessage = error ? getErrorMessage(error) : null;
 
@@ -83,6 +96,9 @@ export default function WeatherPage() {
                 history={searchHistory}
                 onSearch={handleHistorySearch}
                 onDelete={handleHistoryDelete}
+                onClear={handleHistoryClear}
+                maxLength={maxHistoryLength}
+                onSetMaxLength={handleSetMaxLength}
                 loading={isLoading || isFetching}
               />
             </WeatherCard>
