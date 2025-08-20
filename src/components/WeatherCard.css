@@ -1,12 +1,29 @@
 .weather-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  position: relative;
+  background: var(--glass-bg-color);
+  border: 1px solid var(--glass-border-color);
+  border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   min-height: 300px;
   display: flex;
   flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+.weather-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.weather-main-content {
+  justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: flex-end;
 }
 
 .weather-card.loading,
@@ -18,17 +35,16 @@
 }
 
 .weather-card-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-color);
   margin-bottom: 16px;
 }
 
-.weather-main {
+.weather-temperature-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
 }
 
 .temperature-display {
@@ -38,66 +54,62 @@
 
 .temperature {
   font-size: 48px;
-  font-weight: 300;
-  color: #111827;
+  font-weight: 700;
+  color: var(--text-color);
   line-height: 1;
 }
 
 .feels-like {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--fade-text-color);
+  margin-top: 4px;
+}
+
+.location {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color);
   margin-top: 4px;
 }
 
 .weather-icon {
-  width: 80px;
-  height: 80px;
-}
-
-.weather-description {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 24px;
-}
-
-.condition {
-  font-size: 18px;
-  font-weight: 500;
-  color: #111827;
-  text-transform: capitalize;
-}
-
-.description {
-  font-size: 14px;
-  color: #6b7280;
-  text-transform: capitalize;
+  position: absolute;
+  top: 0;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  z-index: 1;
 }
 
 .weather-details {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .detail-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  align-items: flex-end;
 }
 
 .detail-label {
   font-size: 12px;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: var(--fade-text-color);
+  margin-bottom: 4px;
 }
 
 .detail-value {
-  font-size: 16px;
-  font-weight: 500;
-  color: #111827;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.weather-card-children {
+  margin-top: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 /* Loading skeleton */
@@ -108,8 +120,8 @@
 
 .skeleton-item {
   height: 24px;
-  background: #e5e7eb;
-  border-radius: 4px;
+  background: var(--glass-border);
+  border-radius: 6px;
   animation: pulse 2s infinite;
   margin-bottom: 16px;
 }
@@ -140,61 +152,42 @@
 }
 
 .loading-text {
-  color: #6b7280;
+  color: var(--fade-text-color);
   margin-top: 16px;
 }
 
 /* Error styles */
 .error-title {
-  color: #dc2626;
+  color: var(--error-text-color);
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 8px;
 }
 
 .error-text {
-  color: #6b7280;
+  color: var(--fade-text-color);
 }
 
 /* Empty state */
 .empty-title {
-  color: #111827;
+  color: var(--text-color);
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 8px;
 }
 
 .empty-text {
-  color: #6b7280;
-}
-
-/* Dark theme styles */
-body.dark .weather-card {
-  background: #1f2937;
-  border-color: #374151;
-}
-
-body.dark .weather-card-title,
-body.dark .temperature,
-body.dark .condition,
-body.dark .detail-value,
-body.dark .empty-title {
-  color: white;
+  color: var(--fade-text-color);
 }
 
 body.dark .feels-like,
-body.dark .description,
 body.dark .detail-label,
 body.dark .loading-text,
 body.dark .error-text,
 body.dark .empty-text {
-  color: #9ca3af;
-}
-
-body.dark .error-title {
-  color: #f87171;
+  color: rgba(209, 213, 219, 0.95);
 }
 
 body.dark .skeleton-item {
-  background: #4b5563;
+  background: var(--glass-bg-hover-color);
 }

@@ -1,20 +1,22 @@
 .theme-switcher {
-  width: 48px;
-  height: 48px;
-  border: 1px solid var(--border-color, #e0e0e0);
-  border-radius: 12px;
-  background: var(--card-bg, #ffffff);
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--glass-border-color);
+  border-radius: 14px;
+  background: var(--glass-bg-color);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  box-shadow: var(--card-shadow, 0 2px 8px rgba(0, 0, 0, 0.1));
+  box-shadow: 0 6px 16px var(--shadow-color);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
 }
 
 .theme-switcher:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 24px var(--shadow-color);
 }
 
 .theme-switcher:active {
@@ -33,5 +35,5 @@
 /* Focus styles for accessibility */
 .theme-switcher:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.3);
+  box-shadow: 0 0 0 3px var(--secondary);
 }

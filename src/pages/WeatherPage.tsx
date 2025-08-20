@@ -7,9 +7,9 @@ import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   addSearchToHistory,
   removeSearchFromHistory,
-  type SearchHistoryItem,
 } from "@/store/searchHistorySlice";
 import { getErrorMessage } from "@/utils/isErrorMessage";
+import type { SearchHistoryItem } from "@/types/history";
 import "./WeatherPage.css";
 
 // Re-export for compatibility with existing HistoryList component
@@ -32,16 +32,16 @@ export default function WeatherPage() {
     const trimmedCountry = country?.trim();
 
     try {
-      await getWeather({
+      const result = await getWeather({
         city: trimmedCity,
         country: trimmedCountry,
       }).unwrap();
 
-      // Add to history on successful search
+      // Add to history on successful search using response data
       dispatch(
         addSearchToHistory({
-          city: trimmedCity,
-          country: trimmedCountry,
+          city: result.city,
+          country: result.country,
         })
       );
     } catch (err) {
@@ -64,7 +64,6 @@ export default function WeatherPage() {
   return (
     <div className="weather-page">
       <header className="weather-header">
-        <h1 className="app-title">Weather App</h1>
         <ThemeSwitcher />
       </header>
 
@@ -82,16 +81,14 @@ export default function WeatherPage() {
               data={weatherData || null}
               loading={isLoading || isFetching}
               error={errorMessage}
-            />
-          </section>
-
-          <section className="history-section">
-            <HistoryList
-              history={searchHistory}
-              onSearch={handleHistorySearch}
-              onDelete={handleHistoryDelete}
-              loading={isLoading || isFetching}
-            />
+            >
+              <HistoryList
+                history={searchHistory}
+                onSearch={handleHistorySearch}
+                onDelete={handleHistoryDelete}
+                loading={isLoading || isFetching}
+              />
+            </WeatherCard>
           </section>
         </div>
       </main>

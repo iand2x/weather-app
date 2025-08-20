@@ -1,16 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-
-export interface SearchHistoryItem {
-  id: string;
-  city: string;
-  country?: string;
-  timestamp: number;
-}
-
-interface SearchHistoryState {
-  items: SearchHistoryItem[];
-  maxLength: number;
-}
+import type { SearchHistoryState, SearchHistoryItem } from "@/types/history";
 
 const initialState: SearchHistoryState = {
   items: [],

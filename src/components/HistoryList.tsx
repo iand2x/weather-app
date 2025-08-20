@@ -1,4 +1,5 @@
 import type { SearchHistory } from "@/pages/WeatherPage";
+import { HiOutlineSearch, HiOutlineTrash } from "react-icons/hi";
 import "./HistoryList.css";
 
 interface HistoryListProps {
@@ -36,12 +37,12 @@ export default function HistoryList({
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
 
-    return date.toLocaleDateString();
+    return date.toLocaleString();
   };
 
   return (
     <div className="history-container">
-      <h3 className="history-title">Recent Searches</h3>
+      <h3 className="history-title">Search History</h3>
       <div className="history-list">
         {history.map((item) => (
           <div key={item.id} className="history-item">
@@ -58,17 +59,21 @@ export default function HistoryList({
               <button
                 onClick={() => onSearch(item)}
                 title="Search again"
-                className="search-button"
+                className="history-search"
                 disabled={loading}
+                role="button"
+                aria-label={`Search again for ${item.city}${item.country ? `, ${item.country}` : ''}`}
               >
-                Search
+                <HiOutlineSearch size={18} />
               </button>
               <button
                 onClick={() => onDelete(item.id)}
                 title="Remove from history"
-                className="delete-button"
+                className="history-delete"
+                role="button"
+                aria-label={`Remove ${item.city}${item.country ? `, ${item.country}` : ''} from history`}
               >
-                ×
+                <HiOutlineTrash size={18} />
               </button>
             </div>
           </div>

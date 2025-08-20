@@ -30,6 +30,7 @@ export default function ThemeSwitcher() {
       title={`Switch to ${isDark ? "light" : "dark"} theme`}
       aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
       className="theme-switcher"
+      role="button"
     >
       <span className="theme-icon">
         {isDark ? "☀️" : "🌙"}

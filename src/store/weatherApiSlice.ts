@@ -4,30 +4,11 @@ import {
   type BaseQueryFn,
 } from "@reduxjs/toolkit/query/react";
 import { OPENWEATHER_API_KEY, OPENWEATHER_BASE } from "@/utils/config";
-import type { WeatherData, WeatherQuery } from "@/services/weatherService";
-
-// OpenWeather API response interface
-interface OpenWeatherResponse {
-  weather: Array<{
-    main: string;
-    description: string;
-    icon: string;
-  }>;
-  main: {
-    temp: number;
-    feels_like: number;
-    humidity: number;
-    pressure: number;
-  };
-  wind: {
-    speed: number;
-  };
-  visibility?: number;
-  name: string;
-  sys: {
-    country: string;
-  };
-}
+import type {
+  WeatherData,
+  WeatherQuery,
+  OpenWeatherResponse,
+} from "@/types/weather";
 
 // Transform OpenWeather API response to our internal WeatherData format
 function transformWeatherResponse(response: OpenWeatherResponse): WeatherData {
@@ -44,19 +25,22 @@ function transformWeatherResponse(response: OpenWeatherResponse): WeatherData {
     visibility: response.visibility,
     city: response.name,
     country: response.sys.country,
+    dt: response.dt,
   };
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const rawBaseQuery = fetchBaseQuery({ baseUrl: OPENWEATHER_BASE });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const baseQueryWithDelay: BaseQueryFn = async (args, api, extra) => {
-  if (import.meta.env.DEV) await sleep(800); // tweak ms
+  if (import.meta.env.DEV) await sleep(800); // tweak ms to simulate loading.
   return rawBaseQuery(args, api, extra);
 };
 
 export const weatherApi = createApi({
   reducerPath: "weatherApi",
-  baseQuery: baseQueryWithDelay,
+  baseQuery: rawBaseQuery,
+  //baseQuery: baseQueryWithDelay, // Simulated loading for development
   tagTypes: ["Weather"],
   endpoints: (builder) => ({
     getWeather: builder.query<WeatherData, WeatherQuery>({
@@ -110,4 +94,4 @@ export const weatherApi = createApi({
   }),
 });
 
-export const { useGetWeatherQuery, useLazyGetWeatherQuery } = weatherApi; //lazy triggers on demand
+export const { useGetWeatherQuery, useLazyGetWeatherQuery } = weatherApi; //lazy triggers on demand. without lazy, data is fetched when the component mounts or when its arguments change.
