@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { weatherApi } from "./weatherApiSlice";
-import searchHistoryReducer from "./searchHistorySlice";
+import { weatherApi } from "../features/weatherCard/weatherApiSlice";
+import searchHistoryReducer from "../features/history/searchHistorySlice";
 
 export const store = configureStore({
   reducer: {

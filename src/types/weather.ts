@@ -7,10 +7,6 @@ export interface WeatherData {
   description: string;
   icon: string;
   humidity: number;
-  pressure: number;
-  windSpeed: number;
-  windDirection?: number;
-  visibility?: number;
   dt: number;
 }
 

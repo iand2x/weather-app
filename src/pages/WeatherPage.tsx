@@ -1,19 +1,16 @@
-import SearchBar from "@/components/SearchBar";
-import WeatherCard from "@/components/WeatherCard";
-import HistoryList from "@/components/HistoryList";
-import ThemeSwitcher from "@/components/ThemeSwitcher";
-import { useLazyGetWeatherQuery } from "src/store/weatherApiSlice";
-import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import SearchBar from "src/features/searchBar/SearchBar";
+import WeatherCard from "src/features/weatherCard/WeatherCard";
+import HistoryList from "src/features/history/HistoryList";
+import ThemeSwitcher from "src/features/themeSwitcher/ThemeSwitcher";
+import { useLazyGetWeatherQuery } from "src/features/weatherCard/weatherApiSlice";
+import { useAppSelector, useAppDispatch } from "src/app/hooks";
 import {
   addSearchToHistory,
   removeSearchFromHistory,
-} from "@/store/searchHistorySlice";
+} from "src/features/history/searchHistorySlice";
 import { getErrorMessage } from "@/utils/isErrorMessage";
 import type { SearchHistoryItem } from "@/types/history";
 import "./WeatherPage.css";
-
-// Re-export for compatibility with existing HistoryList component
-export type SearchHistory = SearchHistoryItem;
 
 export default function WeatherPage() {
   // Redux state and actions
@@ -50,7 +47,7 @@ export default function WeatherPage() {
     }
   };
 
-  const handleHistorySearch = (historyItem: SearchHistory) => {
+  const handleHistorySearch = (historyItem: SearchHistoryItem) => {
     handleSearch(historyItem.city, historyItem.country);
   };
 

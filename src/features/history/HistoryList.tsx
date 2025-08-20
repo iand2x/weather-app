@@ -1,10 +1,10 @@
-import type { SearchHistory } from "@/pages/WeatherPage";
 import { HiOutlineSearch, HiOutlineTrash } from "react-icons/hi";
+import type { SearchHistoryItem } from "@/types/history";
 import "./HistoryList.css";
 
 interface HistoryListProps {
-  history: SearchHistory[];
-  onSearch: (item: SearchHistory) => void;
+  history: SearchHistoryItem[];
+  onSearch: (item: SearchHistoryItem) => void;
   onDelete: (id: string) => void;
   loading?: boolean;
 }
@@ -62,7 +62,9 @@ export default function HistoryList({
                 className="history-search"
                 disabled={loading}
                 role="button"
-                aria-label={`Search again for ${item.city}${item.country ? `, ${item.country}` : ''}`}
+                aria-label={`Search again for ${item.city}${
+                  item.country ? `, ${item.country}` : ""
+                }`}
               >
                 <HiOutlineSearch size={18} />
               </button>
@@ -71,7 +73,9 @@ export default function HistoryList({
                 title="Remove from history"
                 className="history-delete"
                 role="button"
-                aria-label={`Remove ${item.city}${item.country ? `, ${item.country}` : ''} from history`}
+                aria-label={`Remove ${item.city}${
+                  item.country ? `, ${item.country}` : ""
+                } from history`}
               >
                 <HiOutlineTrash size={18} />
               </button>
