@@ -15,6 +15,10 @@ export interface WeatherQuery {
   country?: string;
 }
 
+/**
+ * Weather data returned from OpenWeather API
+ * @see https://openweathermap.org/current#current_JSON
+ */
 export interface OpenWeatherResponse {
   weather: Array<{
     main: string;
